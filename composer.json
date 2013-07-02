@@ -8,7 +8,12 @@
 			"email": "diftraku@derpy.me"
 		}
 	],
-	"require": {
+	"require"          : {
 		"slim/slim": "2.2.0"
+	},
+	"autoload"         : {
+		"psr-0": {
+			"DerpyCMS\\": "derpy/"
+		}
 	}
 }
