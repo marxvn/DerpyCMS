@@ -1,0 +1,14 @@
+{
+	"name"             : "Derpy-CMS/Derpy-CMS",
+	"description"      : "A derped CMS built on Slim",
+	"minimum-stability": "stable",
+	"authors"          : [
+		{
+			"name" : "Diftraku",
+			"email": "diftraku@derpy.me"
+		}
+	],
+	"require": {
+		"slim/slim": "2.2.0"
+	}
+}
