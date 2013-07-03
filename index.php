@@ -1,8 +1,13 @@
 <?php
 /**
- * Derpy CMS - A derped CMS built on Slim
+ * DerpyCMS - A derped CMS built on Slim
  */
 
 define('DERPY_BASE', dirname(__FILE__));
+require_once DERPY_BASE.'/config.php';
 require_once DERPY_BASE.'/vendor/autoload.php';
-$d = new \DerpyCMS\DerpyCMS();
+
+$app = new \DerpyCMS\DerpyCMS();
+
+// De Magicks!
+$app->run();
