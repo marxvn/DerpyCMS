@@ -4,8 +4,10 @@
  */
 
 namespace DerpyCMS\Models;
+
 use Slim\View;
 
-class Page extends \Slim\View {
+class Page extends \Slim\View
+{
 
 }
