@@ -1,5 +1,7 @@
 # Derpy-CMS
 config.php
+DerpyCMS/Blobs/*
+DerpyCMS/Templates/*
 
 # Composer
 vendor/

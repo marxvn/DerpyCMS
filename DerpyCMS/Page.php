@@ -3,7 +3,7 @@
  * DerpyCMS - A derped CMS built on Slim
  */
 
-namespace DerpyCMS\Models;
+namespace DerpyCMS;
 
 use Slim\View;
 
