@@ -44,7 +44,7 @@ class DerpyCMS extends \Slim\Slim
         $routes = $routes->getPageRoutes();
         foreach ($routes as $route) {
             $callable = function () use ($app, $route) {
-                $app->render($route->id, $route->template_id);
+                $app->render($route->template_id, array('id' => $route->id));
             };
             switch ($route->request_method) {
                 case Request::METHOD_POST:
@@ -85,7 +85,7 @@ class DerpyCMS extends \Slim\Slim
             $slim_defaults,
             array(
                 'templates.path' => DERPY_TPL_PATH,
-                'view'           => '\DerpyCMS\Models\Page',
+                'view'           => '\DerpyCMS\Page',
                 'blob.path'      => DERPY_CMS_BASE.'/Blobs',
                 'cache.path'     => DERPY_CMS_BASE.'/Cache',
             )

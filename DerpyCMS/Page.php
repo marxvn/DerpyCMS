@@ -9,8 +9,10 @@ use Slim\View;
 
 class Page extends \Slim\View
 {
-    public function render($id)
+    public function render($template)
     {
-        $parts = Blob::getParts($id);
+        $this->appendData(Blob::getParts($this->getData('id')));
+        var_dump($this->data);
+        die();
     }
 }

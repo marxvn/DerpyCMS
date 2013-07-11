@@ -22,7 +22,7 @@ class Blob
         );
         $query->bindValue(':page_id', $page_id, \PDO::PARAM_INT);
         $query->execute();
-        $blobs = $query->fetchAll();
+        $blobs = $query->fetchAll(\PDO::FETCH_OBJ);
         $parts = array();
         foreach ($blobs as $blob) {
             if ($blob->file == 0) {
