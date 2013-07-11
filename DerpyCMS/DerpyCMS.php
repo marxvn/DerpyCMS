@@ -5,8 +5,8 @@
 
 namespace DerpyCMS;
 
-use Slim\Slim;
 use Slim\Http\Request;
+use Slim\Slim;
 
 class DerpyCMS extends \Slim\Slim
 {
@@ -63,7 +63,7 @@ class DerpyCMS extends \Slim\Slim
                 case Request::METHOD_HEAD:
                 case Request::METHOD_GET:
                     $this->get($route->path, $callable);
-                break;
+                    break;
             }
         }
     }
@@ -87,7 +87,7 @@ class DerpyCMS extends \Slim\Slim
                 'templates.path' => DERPY_TPL_PATH,
                 'view'           => '\DerpyCMS\Models\Page',
                 'blob.path'      => DERPY_CMS_BASE.'/Blobs',
-                'cache.path'   => DERPY_CMS_BASE.'/Cache',
+                'cache.path'     => DERPY_CMS_BASE.'/Cache',
             )
         );
     }

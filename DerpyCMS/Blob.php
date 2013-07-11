@@ -14,8 +14,8 @@ use Slim\Slim;
 
 class Blob
 {
-
-    static function getParts($page_id) {
+    static function getParts($page_id)
+    {
         $db = DerpyCMS::getPDOInstance();
         $query = $db->prepare(
             'SELECT id, `blob`, `file`, type FROM '.DERPY_DB_PREFIX.'blobs WHERE page_id = :page_id ;'
