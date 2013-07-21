@@ -6,3 +6,6 @@ DerpyCMS/Templates/*
 
 # Composer
 vendor/
+
+# Repomagic!
+!.gitkeep
