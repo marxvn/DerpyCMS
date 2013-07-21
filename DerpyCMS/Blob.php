@@ -25,12 +25,13 @@ class Blob
         $blobs = $query->fetchAll(\PDO::FETCH_OBJ);
         $parts = array();
         foreach ($blobs as $blob) {
+            $part = 'parts.'.$blob->type;
             if ($blob->file == 0) {
                 // Blob is stored in DB
-                $parts[$blob->type] = $blob->blob;
+                $parts[$part] = $blob->blob;
             } else {
                 // Blob is stored in filesystem
-                $parts[$blob->type] = Blob::getFileBlob($blob->blob);
+                $parts[$part] = Blob::getFileBlob($blob->blob);
 
             }
         }
