@@ -44,7 +44,7 @@ class DerpyCMS extends \Slim\Slim
         $routes = $routes->getPageRoutes();
         foreach ($routes as $route) {
             $callable = function () use ($app, $route) {
-                $app->render($route->template_id, array('id' => $route->id));
+                $app->renderPage($route->template_id, $route->id);
             };
             switch ($route->request_method) {
                 case Request::METHOD_POST:
@@ -86,12 +86,32 @@ class DerpyCMS extends \Slim\Slim
             array(
                 'templates.path' => DERPY_TPL_PATH,
                 'view'           => '\DerpyCMS\Page',
-                'blob.path'      => DERPY_CMS_BASE.'/Blobs',
-                'cache.path'     => DERPY_CMS_BASE.'/Cache',
+                'blob.path'      => DERPY_BLOB_PATH,
+                'cache.path'     => DERPY_CACHE_PATH,
             )
         );
     }
 
+    /**
+     * Render a page
+     * Call this method within a GET, POST, PUT, DELETE, NOT FOUND, or ERROR
+     * callable to render a template whose output is appended to the
+     * current HTTP response body. How the template is rendered is
+     * delegated to the current View.
+     *
+     * @param  string $template The name of the template passed into the view's render() method
+     * @param  int    $id       Page ID to render
+     * @param  int    $status   The HTTP response status code to use (optional)
+     */
+    public function renderPage($template, $id, $status = null)
+    {
+        if (!is_null($status)) {
+            $this->response->status($status);
+        }
+        $this->view->setTemplatesDirectory($this->config('templates.path'));
+        $this->view->appendData(Blob::getParts($id));
+        $this->view->display($template);
+    }
 
     public function __destruct()
     {
