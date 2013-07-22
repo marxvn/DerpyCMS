@@ -1,10 +1,6 @@
 <?php
 /**
- * Created by JetBrains PhpStorm.
- * User: Diftraku
- * Date: 11/07/13
- * Time: 13:46
- * To change this template use File | Settings | File Templates.
+ * DerpyCMS - A derped CMS built on Slim
  */
 
 namespace DerpyCMS;
