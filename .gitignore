@@ -3,6 +3,7 @@
 config.php
 DerpyCMS/Blobs/*
 DerpyCMS/Templates/*
+!DerpyCMS/Templates/default
 
 # Composer
 vendor/
