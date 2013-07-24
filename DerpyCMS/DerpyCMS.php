@@ -40,8 +40,7 @@ class DerpyCMS extends \Slim\Slim
     public function init()
     {
         $app = $this->getInstance();
-        $routes = new Routes();
-        $routes = $routes->getPageRoutes();
+        $routes = $this->view('\DerpyCMS\Page')->getPageRoutes();
         foreach ($routes as $route) {
             $callable = function () use ($app, $route) {
                 $app->renderPage($route->template_id, $route->id);
@@ -110,6 +109,7 @@ class DerpyCMS extends \Slim\Slim
         }
         $this->view->setTemplatesDirectory($this->config('templates.path'));
         $this->view->appendData(Blob::getParts($id));
+        $this->view->appendData(Page::getMeta($id));
         $this->view->display($template);
     }
 
