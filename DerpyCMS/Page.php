@@ -8,31 +8,58 @@ namespace DerpyCMS;
 use Slim\View;
 use Slim\Http\Request;
 
-class Page extends \Slim\View
+/**
+ * Class Page
+ *
+ * @package DerpyCMS
+ */
+class Page extends View
 {
+    /**
+     *
+     */
     const TABLE_NAME = 'page';
+    /**
+     *
+     */
     const TABLE_META_NAME = 'page_meta';
 
+    /**
+     * @return mixed
+     */
     public function content()
     {
         return $this->getData('parts.content');
     }
 
+    /**
+     * @return mixed
+     */
     public function title()
     {
         return $this->getData('page.title');
     }
 
+    /**
+     * @return mixed
+     */
     public function description()
     {
         return $this->getData('page.description');
     }
 
+    /**
+     * @return mixed
+     */
     public function keywords()
     {
         return $this->getData('page.keywords');
     }
 
+    /**
+     * @param $part
+     * @return mixed|string
+     */
     public function getPart($part)
     {
         $part = 'parts.'.$part;
@@ -43,19 +70,65 @@ class Page extends \Slim\View
         }
     }
 
+    /**
+     * Get data
+     *
+     * @param  string|null $key
+     * @param  string|null $default
+     * @return mixed            If key is null, array of template data;
+     *                          If key exists, value of datum with key;
+     *                          If key does not exist, null;
+     */
+    public function getData($key = null, $default = null)
+    {
+        if (!is_null($key)) {
+            return isset($this->data[$key]) ? $this->data[$key] : $default;
+        } else {
+            return $this->data;
+        }
+    }
+
+    /**
+     * @return mixed
+     */
     public function parentId()
     {
         return $this->getData('page.parent_id');
     }
 
-    public function child($key)
+    /*public function child($id)
     {
 
-    }
-
-    public function children()
+    }*/
+    /**
+     * @param int $level     How deep to search for children
+     * @param int $page_id   Page to use as a parent
+     * @return array
+     */
+    public function children($level = 1, $page_id = null)
     {
-
+        if (is_null($page_id)) {
+            $page_id = $this->getData('page.id');
+        }
+        $db = DerpyCMS::getPDOInstance();
+        $query = $db->prepare(
+            'SELECT * FROM '.DERPY_DB_PREFIX.Page::TABLE_NAME.' WHERE parent_id = :page_id'
+        );
+        $query->bindValue(':page_id', $page_id, \PDO::PARAM_INT);
+        $query->execute();
+        $children = $query->fetchAll(\PDO::FETCH_OBJ);
+        if ($level > 1 && is_array($children)) {
+            $level--;
+            $sub_children = array();
+            foreach ($children as $child) {
+                $sub_children = array_merge($this->children($level, $child->id), $sub_children);
+            }
+            $children = array_merge($children, $sub_children);
+        }
+        if (!is_array($children)) {
+            $children = array();
+        }
+        return $children;
     }
 
     /**
@@ -74,7 +147,6 @@ class Page extends \Slim\View
         $query->execute();
         $data = $query->fetchAll(\PDO::FETCH_OBJ);
         $meta = array();
-        var_dump($data);
         foreach ($data as $d) {
             $meta['page.'.$d->key] = $d->val;
         }
@@ -87,10 +159,12 @@ class Page extends \Slim\View
         foreach ($data as $key => $val) {
             $meta['page.'.$key] = $val;
         }
-        var_dump($meta, $data);
         return $meta;
     }
 
+    /**
+     * @return array|mixed|string
+     */
     public function getPageRoutes()
     {
         $db = DerpyCMS::getPDOInstance();
@@ -145,6 +219,11 @@ class Page extends \Slim\View
         return $pages;
     }
 
+    /**
+     * @param       $page
+     * @param array $pages
+     * @return array
+     */
     protected function resolvePath($page, array $pages)
     {
         if (!is_null($page->parent_id) && array_key_exists($page->parent_id, $pages)) {

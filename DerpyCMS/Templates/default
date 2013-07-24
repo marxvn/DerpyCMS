@@ -1,2 +1,4 @@
 <?php
+// Content-Type override
+header('text/plain');
 echo $this->content();

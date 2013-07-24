@@ -108,13 +108,18 @@ class DerpyCMS extends \Slim\Slim
             $this->response->status($status);
         }
         $this->view->setTemplatesDirectory($this->config('templates.path'));
-        $this->view->appendData(Blob::getParts($id));
-        $this->view->appendData(Page::getMeta($id));
+        $this->view->appendData(
+            array_merge(
+                Page::getMeta($id),
+                Blob::getParts($id),
+                array('page.id' => $id, 'page.template_id' => $template, 'response.status' => $status)
+            )
+        );
         $this->view->display($template);
     }
 
     public function __destruct()
     {
-        $this->pdo = null;
+        static::$pdo = null;
     }
 }
