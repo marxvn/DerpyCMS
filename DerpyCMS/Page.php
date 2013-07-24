@@ -16,13 +16,22 @@ use Slim\Http\Request;
 class Page extends View
 {
     /**
+     * Table name for data
      *
+     * @const
      */
     const TABLE_NAME = 'page';
     /**
+     * Table name for metadata
      *
+     * @const
      */
     const TABLE_META_NAME = 'page_meta';
+
+    /**
+     * @var array Key based array of children
+     */
+    protected $children = array();
 
     /**
      * @return mixed
@@ -89,6 +98,8 @@ class Page extends View
     }
 
     /**
+     * Get parent page ID
+     *
      * @return mixed
      */
     public function parentId()
@@ -96,14 +107,30 @@ class Page extends View
         return $this->getData('page.parent_id');
     }
 
-    /*public function child($id)
-    {
-
-    }*/
     /**
-     * @param int $level     How deep to search for children
-     * @param int $page_id   Page to use as a parent
-     * @return array
+     * Get specific child
+     *
+     * @param $index
+     * @return object|bool  Child object if $index exists,
+     *                      otherwise false
+     */
+    public function child($index)
+    {
+        $children = $this->children();
+        if (array_key_exists($index, $children)) {
+            return $children[$index];
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Get page children
+     *
+     * @param int $level
+     * @param int $page_id
+     * @return array    Key based array of children,
+     *                  last results are available through Page::$children
      */
     public function children($level = 1, $page_id = null)
     {
@@ -128,8 +155,14 @@ class Page extends View
         if (!is_array($children)) {
             $children = array();
         }
+        $this->children = $children;
         return $children;
     }
+
+
+    /**
+     * STATIC METHODS
+     */
 
     /**
      * Retrieve page metadata
@@ -137,7 +170,7 @@ class Page extends View
      * @param int $page_id Page ID to retrieve metadata for
      * @return array An array of metadata arranged in page.key => meta pairs
      */
-    static public function getMeta($page_id)
+    public static function getMeta($page_id)
     {
         $db = DerpyCMS::getPDOInstance();
         $query = $db->prepare(
@@ -163,9 +196,12 @@ class Page extends View
     }
 
     /**
-     * @return array|mixed|string
+     * Get routes for all pages in database
+     *
+     * @return array
+     * @throws \Slim\Exception\Stop If database query fails
      */
-    public function getPageRoutes()
+    public static function getPageRoutes()
     {
         $db = DerpyCMS::getPDOInstance();
         $app = DerpyCMS::getInstance();
@@ -192,7 +228,7 @@ class Page extends View
                     if ($page->id == 1) {
                         $path = '/';
                     } else {
-                        $path = $this->resolvePath($page, $pages);
+                        $path = Page::resolvePath($page, $pages);
                         $path = implode('/', $path);
                     }
                     $page->path = $path;
@@ -213,7 +249,7 @@ class Page extends View
                 fclose($h);
                 unset($data);
             } catch (\PDOException $e) {
-                $app->halt(500, 'We dun halt!');
+                $app->halt(500, 'Database Failure: '.$e->getMessage());
             }
         }
         return $pages;
@@ -224,14 +260,14 @@ class Page extends View
      * @param array $pages
      * @return array
      */
-    protected function resolvePath($page, array $pages)
+    protected static function resolvePath($page, array $pages)
     {
         if (!is_null($page->parent_id) && array_key_exists($page->parent_id, $pages)) {
             $parent = $pages[$page->parent_id];
             $slug = array($page->slug);
             $parent_slug = array($parent->slug);
             if (!is_null($parent->parent_id)) {
-                $parent_slug = $this->resolvePath($parent, $pages);
+                $parent_slug = self::resolvePath($parent, $pages);
             }
             $slug = array_merge($parent_slug, $slug);
             return $slug;

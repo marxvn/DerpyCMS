@@ -8,7 +8,7 @@ namespace DerpyCMS;
 use Slim\Http\Request;
 use Slim\Slim;
 
-class DerpyCMS extends \Slim\Slim
+class DerpyCMS extends Slim
 {
     /**
      * @var \PDO
@@ -23,24 +23,18 @@ class DerpyCMS extends \Slim\Slim
     public function __construct($userSettings = array())
     {
         parent::__construct($userSettings = array());
-        try {
-            static::$pdo = new \PDO(DERPY_DB_DSN, DERPY_DB_USER, DERPY_DB_PASS);
-        } catch (\PDOException $e) {
-            $this->halt(500, 'Unable to connect to database');
-        }
+        self::getPDOInstance();
     }
 
     /**
      * Initializes page routes from database
      *
-     * @TODO Separate page content logic into \DerpyCMS\Models\Page instead of using directly here?
-     * @TODO Create a route cache, no need to poll the DB every request
-     * @TODO Properly resolve parent path using the slugs
+     * @return null
      */
     public function init()
     {
         $app = $this->getInstance();
-        $routes = $this->view('\DerpyCMS\Page')->getPageRoutes();
+        $routes = Page::getPageRoutes();
         foreach ($routes as $route) {
             $callable = function () use ($app, $route) {
                 $app->renderPage($route->template_id, $route->id);
@@ -67,8 +61,20 @@ class DerpyCMS extends \Slim\Slim
         }
     }
 
+    /**
+     * Get active database connection
+     *
+     * @return \PDO
+     */
     public static function getPDOInstance()
     {
+        if (!static::$pdo instanceof \PDO) {
+            try {
+                static::$pdo = new \PDO(DERPY_DB_DSN, DERPY_DB_USER, DERPY_DB_PASS);
+            } catch (\PDOException $e) {
+                DerpyCMS::halt(500, 'Unable to connect to database: '.$e->getMessage());
+            }
+        }
         return static::$pdo;
     }
 
