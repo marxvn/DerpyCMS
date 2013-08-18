@@ -8,6 +8,32 @@ namespace DerpyCMS;
 use Slim\Http\Request;
 use Slim\Slim;
 
+
+if (!defined('DERPYCMS_DB_DSN')) {
+	define('DERPYCMS_DB_DSN', 'mysql:dbname=derpycms;host=localhost;port=3306');
+}
+if (!defined('DERPYCMS_DB_USER')) {
+	define('DERPYCMS_DB_USER', 'derpycms');
+}
+if (!defined('DERPYCMS_DB_PASS')) {
+	define('DERPYCMS_DB_PASS', 'derpycms');
+}
+if (!defined('DERPY_DB_PREFIX')) {
+	define('DERPY_DB_PREFIX', 'derpycms_');
+}
+if (!defined('DERPYCMS_BASE')) {
+	define('DERPYCMS_BASE', dirname(dirname(dirname(__FILE__))));
+}
+// Path Helpers
+define('DERPYCMS_APP',      DERPYCMS_BASE.'/app');
+define('DERPYCMS',          DERPYCMS_APP. '/DerpyCMS');
+define('DERPYCMS_MODELS',   DERPYCMS.     '/Models');
+define('DERPYCMS_DATA',     DERPYCMS_APP. '/Data');
+define('DERPYCMS_TPLS',     DERPYCMS_DATA.'/Templates');
+define('DERPYCMS_VIEWS',    DERPYCMS_DATA.'/Views');
+define('DERPYCMS_CACHE',    DERPYCMS_DATA.'/Cache');
+define('DERPYCMS_BLOBS',    DERPYCMS_DATA.'/Blobs');
+
 class DerpyCMS extends Slim
 {
     /**
@@ -70,7 +96,7 @@ class DerpyCMS extends Slim
     {
         if (!static::$pdo instanceof \PDO) {
             try {
-                static::$pdo = new \PDO(DERPY_DB_DSN, DERPY_DB_USER, DERPY_DB_PASS);
+                static::$pdo = new \PDO(DERPYCMS_DB_DSN, DERPYCMS_DB_USER, DERPYCMS_DB_PASS);
             } catch (\PDOException $e) {
                 DerpyCMS::halt(500, 'Unable to connect to database: '.$e->getMessage());
             }
@@ -89,10 +115,10 @@ class DerpyCMS extends Slim
         return array_merge(
             $slim_defaults,
             array(
-                'templates.path' => DERPY_TPL_PATH,
+                'templates.path' => DERPYCMS_TPLS,
                 'view'           => '\DerpyCMS\Page',
-                'blob.path'      => DERPY_BLOB_PATH,
-                'cache.path'     => DERPY_CACHE_PATH,
+                'blob.path'      => DERPYCMS_BLOBS,
+                'cache.path'     => DERPYCMS_CACHE,
             )
         );
     }

@@ -1,10 +1,10 @@
 # Derpy-CMS
 .idea
 config.php
-DerpyCMS/Cache/*
-DerpyCMS/Blobs/*
-DerpyCMS/Templates/*
-!DerpyCMS/Templates/default
+app/Data/Cache/*
+app/Data/Blobs/*
+app/Data/Templates/*
+!app/Data/Templates/default
 
 # Composer
 vendor/
