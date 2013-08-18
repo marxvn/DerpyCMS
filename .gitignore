@@ -1,6 +1,7 @@
 # Derpy-CMS
 .idea
 config.php
+DerpyCMS/Cache/*
 DerpyCMS/Blobs/*
 DerpyCMS/Templates/*
 !DerpyCMS/Templates/default
