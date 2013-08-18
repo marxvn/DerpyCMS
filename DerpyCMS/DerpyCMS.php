@@ -25,14 +25,13 @@ if (!defined('DERPYCMS_BASE')) {
 	define('DERPYCMS_BASE', dirname(dirname(dirname(__FILE__))));
 }
 // Path Helpers
-define('DERPYCMS_APP',      DERPYCMS_BASE.'/app');
-define('DERPYCMS',          DERPYCMS_APP. '/DerpyCMS');
-define('DERPYCMS_MODELS',   DERPYCMS.     '/Models');
-define('DERPYCMS_DATA',     DERPYCMS_APP. '/Data');
-define('DERPYCMS_TPLS',     DERPYCMS_DATA.'/Templates');
-define('DERPYCMS_VIEWS',    DERPYCMS_DATA.'/Views');
-define('DERPYCMS_CACHE',    DERPYCMS_DATA.'/Cache');
-define('DERPYCMS_BLOBS',    DERPYCMS_DATA.'/Blobs');
+define('DERPYCMS',          DERPYCMS_BASE. '/DerpyCMS');
+define('DERPYCMS_MODELS',   DERPYCMS.      '/Models');
+define('DERPYCMS_DATA',     DERPYCMS_BASE. '/Data');
+define('DERPYCMS_TPLS',     DERPYCMS_DATA. '/Templates');
+define('DERPYCMS_VIEWS',    DERPYCMS_DATA. '/Views');
+define('DERPYCMS_CACHE',    DERPYCMS_DATA. '/Cache');
+define('DERPYCMS_BLOBS',    DERPYCMS_DATA. '/Blobs');
 
 class DerpyCMS extends Slim
 {
