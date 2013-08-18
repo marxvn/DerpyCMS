@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title><?php echo $this->title(); ?></title>
+    <meta name="description" content="<?php echo $this->description(); ?>">
+    <meta name="keywords" content="<?php echo $this->keywords(); ?>">
+    <meta name="generator" content="DerpyCMS">
+</head>
+<body>
+<?php echo $this->content(); ?>
+<?php echo $this->getPart('footer'); ?>
+
+
+<?php
+    var_dump($this);
+   ?>
+</body>
+</html>
