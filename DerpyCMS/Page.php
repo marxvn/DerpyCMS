@@ -195,13 +195,26 @@ class Page extends View
         return $meta;
     }
 
-    /**
+	/**
+	 * Get page parts using the Blobs
+	 * Wrapper for Blob::getParts()
+	 *
+	 * @todo refactor Blob methods here and implement Blob as a class to feed for \PDO::fetchAll()
+	 *
+	 * @return array
+	 * @throws \PDOException
+	 */
+	public static function getParts($id) {
+		return Blob::getParts($id);
+	}
+
+	/**
      * Get routes for all pages in database
      *
      * @return array
      * @throws \Slim\Exception\Stop If database query fails
      */
-    public static function getPageRoutes()
+    public static function getRoutes()
     {
         $db = DerpyCMS::getPDOInstance();
         $app = DerpyCMS::getInstance();

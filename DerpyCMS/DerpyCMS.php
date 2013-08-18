@@ -59,7 +59,7 @@ class DerpyCMS extends Slim
     public function init()
     {
         $app = $this->getInstance();
-        $routes = Page::getPageRoutes();
+        $routes = Page::getRoutes();
         foreach ($routes as $route) {
             $callable = function () use ($app, $route) {
                 $app->renderPage($route->template_id, $route->id);
@@ -142,7 +142,7 @@ class DerpyCMS extends Slim
         $this->view->appendData(
             array_merge(
                 Page::getMeta($id),
-                Blob::getParts($id),
+                Page::getParts($id),
                 array('page.id' => $id, 'page.template_id' => $template, 'response.status' => $status)
             )
         );
