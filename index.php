@@ -8,5 +8,4 @@ require_once DERPYCMS_BASE.'/config.php';
 require_once DERPYCMS_BASE.'/vendor/autoload.php';
 
 $app = new \DerpyCMS\DerpyCMS();
-$app->init();
 $app->run();

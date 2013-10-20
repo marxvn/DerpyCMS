@@ -48,6 +48,7 @@ class DerpyCMS extends Slim
     public function __construct($userSettings = array())
     {
         parent::__construct($userSettings = array());
+	    $this->initRoutes();
         self::getPDOInstance();
     }
 
@@ -56,12 +57,13 @@ class DerpyCMS extends Slim
      *
      * @return null
      */
-    public function init()
+    public function initRoutes()
     {
         $app = $this->getInstance();
         $routes = Page::getRoutes();
         foreach ($routes as $route) {
             $callable = function () use ($app, $route) {
+	            /** @noinspection PhpUndefinedMethodInspection */
                 $app->renderPage($route->template_id, $route->id);
             };
             switch ($route->request_method) {
