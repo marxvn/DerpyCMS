@@ -38,6 +38,10 @@ class Cache implements CacheEngine {
 				case 'file':
 					Cache::$engine = new File($matches[2]);
 					break;
+				case 'nocache':
+				default:
+					Cache::$engine = new NoCache();
+					break;
 			}
 		}
 		else {
