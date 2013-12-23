@@ -200,9 +200,8 @@ class Page extends View
 	 * Wrapper for Blob::getParts()
 	 *
 	 * @todo refactor Blob methods here and implement Blob as a class to feed for \PDO::fetchAll()
-	 *
+	 * @param $id
 	 * @return array
-	 * @throws \PDOException
 	 */
 	public static function getParts($id) {
 		return Blob::getParts($id);
@@ -218,9 +217,9 @@ class Page extends View
     {
         $db = DerpyCMS::getPDOInstance();
         $app = DerpyCMS::getInstance();
-        $pages = $app->config('cache.path').'/pages.json';
-        if (file_exists($pages)) {
-            $pages = json_decode(file_get_contents($pages));
+        $pages = DerpyCMS::$cache->get('pages.json');
+        if ($pages !== false) {
+            $pages = json_decode($pages);
         } else {
             try {
                 $query = $db->prepare(
@@ -239,6 +238,7 @@ class Page extends View
                 foreach ($pages as $id => $page) {
                     // Resolve paths for pages
                     if ($page->id == 1) {
+	                    //@TODO Reconfigurable option for this?
                         $path = '/';
                     } else {
                         $path = Page::resolvePath($page, $pages);
@@ -248,6 +248,7 @@ class Page extends View
 
                     // Make sure we have a request method
                     if (empty($page->request_method) || is_null($page->request_method)) {
+	                    // Default to GET
                         $page->request_method = Request::METHOD_GET;
                     }
 
@@ -257,9 +258,7 @@ class Page extends View
 
                 // Prep data for cache
                 $data = json_encode($pages);
-                $h = fopen($app->config('cache.path').'/pages.json', 'w+');
-                fwrite($h, $data);
-                fclose($h);
+	            $pages = DerpyCMS::$cache->set('pages.json', $data);
                 unset($data);
             } catch (\PDOException $e) {
                 $app->halt(500, 'Database Failure: '.$e->getMessage());

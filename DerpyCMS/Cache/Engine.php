@@ -1,7 +1,7 @@
 <?php
 /**
- * Derpy-CMS
- * 
+ * DerpyCMS
+ *
  * @author Diftraku
  */
 
@@ -17,4 +17,6 @@ interface Engine {
 	public function getHits();
 
 	public function getMisses();
+
+	public function close();
 }

@@ -1,6 +1,6 @@
 <?php
 /**
- * Derpy-CMS - Cache
+ * DerpyCMS - Cache
  * Blatantly copied from Shimmie's codebase
  * This stuff just works™
  *
@@ -25,9 +25,9 @@ class Cache implements CacheEngine {
 	 */
 	static private $engine;
 
-	public function init($dsn = 'file://./cache/') {
+	public function init($dsn = 'file:./cache/') {
 		$matches = array();
-		if (preg_match("#(memcache|apc|file)://(.*)#", $dsn, $matches)) {
+		if (preg_match("#(memcache|apc|file):(.*)#", $dsn, $matches)) {
 			switch ($matches[1]) {
 				case 'memcache':
 					Cache::$engine = new Memcache($matches[2]);
@@ -69,4 +69,11 @@ class Cache implements CacheEngine {
 		return Cache::$engine->getMisses();
 	}
 
+	public function close() {
+		self::$engine->close();
+	}
+
+	function __destruct() {
+		$this->close();
+	}
 }

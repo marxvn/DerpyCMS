@@ -1,7 +1,7 @@
 <?php
 /**
- * Derpy-CMS
- * 
+ * DerpyCMS
+ *
  * @author Diftraku
  */
 
@@ -10,7 +10,8 @@ namespace DerpyCMS\Cache\Adapter;
 use DerpyCMS\Cache\Engine as CacheEngine;
 
 class APC implements CacheEngine {
-	var $hits = 0, $misses = 0;
+	protected $hits = 0;
+	protected $misses = 0;
 
 	public function __construct($args) {
 	}
@@ -46,5 +47,9 @@ class APC implements CacheEngine {
 
 	public function getMisses() {
 		return $this->misses;
+	}
+
+	public function close() {
+		return true;
 	}
 }

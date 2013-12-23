@@ -1,7 +1,7 @@
 <?php
 /**
- * Derpy-CMS
- * 
+ * DerpyCMS
+ *
  * @author Diftraku
  */
 
@@ -57,5 +57,10 @@ class Memcache implements CacheEngine {
 
 	public function getMisses() {
 		return $this->misses;
+	}
+
+	public function close() {
+		$this->memcache->close();
+		$this->memcache = null;
 	}
 }

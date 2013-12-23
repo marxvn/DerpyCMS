@@ -1,7 +1,7 @@
 <?php
 /**
- * Derpy-CMS
- * 
+ * DerpyCMS
+ *
  * @author Diftraku
  */
 
@@ -15,8 +15,8 @@ class File implements CacheEngine {
 	protected $path;
 
 	public function __construct($args) {
-		if(preg_match("/gz=([^;](?:true|false))/", $args, $matches)) $gzip = $matches[1];
-		if(preg_match("/gz_level=([^;][0-9])/", $args, $matches)) $gzip_level = $matches[1];
+		if (preg_match("/gz=([^;](?:true|false))/", $args, $matches)) $gzip = $matches[1];
+		if (preg_match("/gz_level=([^;][0-9])/", $args, $matches)) $gzip_level = $matches[1];
 	}
 
 	public function get($key) {
@@ -24,10 +24,12 @@ class File implements CacheEngine {
 		$val = file_get_contents($this->getStoragePath($key));
 		if ($val) {
 			$this->hits++;
+
 			return $val;
 		}
 		else {
 			$this->misses++;
+
 			return false;
 		}
 	}
@@ -49,12 +51,19 @@ class File implements CacheEngine {
 	public function getMisses() {
 		return $this->misses;
 	}
+
 	public function getStoragePath($key) {
 		assert(!is_null($key));
 		$key = sha1($key);
 		$ab = substr($key, 0, 2);
 		$cd = substr($key, 2, 2);
-		return $this->path.DIRECTORY_SEPARATOR.$ab.DIRECTORY_SEPARATOR.$cd.DIRECTORY_SEPARATOR.$key;
 
+		return $this->path.DIRECTORY_SEPARATOR.$ab.DIRECTORY_SEPARATOR.$cd.DIRECTORY_SEPARATOR.$key;
 	}
+
+	public function close() {
+		return true;
+	}
+
+
 }

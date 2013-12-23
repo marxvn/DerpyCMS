@@ -1,7 +1,7 @@
 <?php
 /**
- * Derpy-CMS
- * 
+ * DerpyCMS
+ *
  * @author Diftraku
  */
 
@@ -15,9 +15,11 @@ class NoCache implements CacheEngine {
 	}
 
 	public function set($key, $val, $time = 0) {
+		return true;
 	}
 
 	public function delete($key) {
+		return true;
 	}
 
 	public function getHits() {
@@ -26,5 +28,9 @@ class NoCache implements CacheEngine {
 
 	public function getMisses() {
 		return 0;
+	}
+
+	public function close() {
+		return true;
 	}
 }
