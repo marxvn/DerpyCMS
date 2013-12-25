@@ -7,14 +7,13 @@
  * @author Diftraku
  */
 
-namespace DerpyCMS;
+namespace DerpyCMS\Models;
 
-use DerpyCMS\Cache\Adapter\APC;
-use DerpyCMS\Cache\Adapter\File;
-use DerpyCMS\Cache\Adapter\Memcache;
-use DerpyCMS\Cache\Adapter\NoCache;
-use DerpyCMS\Cache\Engine as CacheEngine;
-
+use \DerpyCMS\Models\Cache\Adapters\APC;
+use \DerpyCMS\Models\Cache\Adapters\File;
+use \DerpyCMS\Models\Cache\Adapters\Memcache;
+use \DerpyCMS\Models\Cache\Adapters\NoCache;
+use \DerpyCMS\Models\Cache\Engine as CacheEngine;
 
 class Cache implements CacheEngine {
 
@@ -23,54 +22,54 @@ class Cache implements CacheEngine {
 	 *
 	 * @var CacheEngine
 	 */
-	static private $engine;
+	private $engine;
 
-	public function init($dsn = 'file:./cache/') {
+	public function __construct($dsn = 'file:./cache') {
 		$matches = array();
 		if (preg_match("#(memcache|apc|file):(.*)#", $dsn, $matches)) {
 			switch ($matches[1]) {
 				case 'memcache':
-					Cache::$engine = new Memcache($matches[2]);
+					$this->engine = new Memcache($matches[2]);
 					break;
 				case 'apc':
-					Cache::$engine = new APC($matches[2]);
+					$this->engine = new APC($matches[2]);
 					break;
 				case 'file':
-					Cache::$engine = new File($matches[2]);
+					$this->engine = new File($matches[2]);
 					break;
 				case 'nocache':
 				default:
-					Cache::$engine = new NoCache();
+					$this->engine = new NoCache();
 					break;
 			}
 		}
 		else {
-			Cache::$engine = new NoCache();
+			$this->engine = new NoCache();
 		}
 	}
 
 	public function get($key) {
-		return Cache::$engine->get($key);
+		return $this->engine->get($key);
 	}
 
 	public function set($key, $val, $time = 0) {
-		return Cache::$engine->set($key, $val, $time = 0);
+		return $this->engine->set($key, $val, $time = 0);
 	}
 
 	public function delete($key) {
-		return Cache::$engine->delete($key);
+		return $this->engine->delete($key);
 	}
 
 	public function getHits() {
-		return Cache::$engine->getHits();
+		return $this->engine->getHits();
 	}
 
 	public function getMisses() {
-		return Cache::$engine->getMisses();
+		return $this->engine->getMisses();
 	}
 
 	public function close() {
-		self::$engine->close();
+		$this->engine->close();
 	}
 
 	function __destruct() {

@@ -5,9 +5,9 @@
  * @author Diftraku
  */
 
-namespace DerpyCMS\Cache\Adapter;
+namespace DerpyCMS\Models\Cache\Adapters;
 
-use DerpyCMS\Cache\Engine as CacheEngine;
+use DerpyCMS\Models\Cache\Engine as CacheEngine;
 
 class NoCache implements CacheEngine {
 	public function get($key) {

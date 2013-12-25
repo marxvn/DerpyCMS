@@ -7,7 +7,18 @@ namespace DerpyCMS;
 
 use Slim\Http\Request;
 use Slim\Slim;
+use \DerpyCMS\Models\Page;
+use \DerpyCMS\Models\Cache;
 
+
+// Path Helpers
+define('DERPYCMS', DERPYCMS_BASE.'/DerpyCMS');
+define('DERPYCMS_MODELS', DERPYCMS.'/Models');
+define('DERPYCMS_DATA', DERPYCMS_BASE.'/Data');
+define('DERPYCMS_TPLS', DERPYCMS_DATA.'/Templates');
+define('DERPYCMS_VIEWS', DERPYCMS_DATA.'/Views');
+define('DERPYCMS_CACHE', DERPYCMS_DATA.'/Cache');
+define('DERPYCMS_BLOBS', DERPYCMS_DATA.'/Blobs');
 
 if (!defined('DERPYCMS_DB_DSN')) {
 	define('DERPYCMS_DB_DSN', 'mysql:dbname=derpycms;host=localhost;port=3306');
@@ -22,19 +33,11 @@ if (!defined('DERPY_DB_PREFIX')) {
 	define('DERPY_DB_PREFIX', 'derpycms_');
 }
 if (!defined('DERPYCMS_CACHE_DSN')) {
-	define('DERPYCMS_CACHE_DSN', 'file:./cache/;gz=false');
+	define('DERPYCMS_CACHE_DSN', 'file:'.DERPYCMS_CACHE);
 }
 if (!defined('DERPYCMS_BASE')) {
 	define('DERPYCMS_BASE', dirname(dirname(dirname(__FILE__))));
 }
-// Path Helpers
-define('DERPYCMS', DERPYCMS_BASE.'/DerpyCMS');
-define('DERPYCMS_MODELS', DERPYCMS.'/Models');
-define('DERPYCMS_DATA', DERPYCMS_BASE.'/Data');
-define('DERPYCMS_TPLS', DERPYCMS_DATA.'/Templates');
-define('DERPYCMS_VIEWS', DERPYCMS_DATA.'/Views');
-define('DERPYCMS_CACHE', DERPYCMS_DATA.'/Cache');
-define('DERPYCMS_BLOBS', DERPYCMS_DATA.'/Blobs');
 
 class DerpyCMS extends Slim {
 	/**
@@ -43,7 +46,7 @@ class DerpyCMS extends Slim {
 	static $pdo;
 
 	/**
-	 * @var \DerpyCMS\Cache\Engine
+	 * @var \DerpyCMS\Models\Cache
 	 */
 	static $cache;
 
@@ -68,9 +71,8 @@ class DerpyCMS extends Slim {
 		$app = $this->getInstance();
 		$routes = Page::getRoutes();
 		foreach ($routes as $route) {
-			$callable = function () use ($app, $route) {
-				/** @noinspection PhpUndefinedMethodInspection */
-				$app->renderPage($route->template_id, $route->id);
+			$callable = function() use ($app, $route) {
+				$app->renderPage($route);
 			};
 			switch ($route->request_method) {
 				case Request::METHOD_POST:
@@ -114,7 +116,7 @@ class DerpyCMS extends Slim {
 	/**
 	 * Get active cache engine
 	 *
-	 * @return \PDO
+	 * @return \DerpyCMS\Models\Cache
 	 */
 	public static function getCacheEngine() {
 		if (!static::$cache instanceof Cache) {
@@ -140,7 +142,7 @@ class DerpyCMS extends Slim {
 			$slim_defaults,
 			array(
 				'templates.path' => DERPYCMS_TPLS,
-				'view'           => '\DerpyCMS\Page',
+				//'view'           => '\DerpyCMS\Models\Page',
 				'blob.path'      => DERPYCMS_BLOBS,
 				'cache.path'     => DERPYCMS_CACHE,
 			)
@@ -148,29 +150,20 @@ class DerpyCMS extends Slim {
 	}
 
 	/**
-	 * Render a page
+	 * Process a page request
 	 * Call this method within a GET, POST, PUT, DELETE, NOT FOUND, or ERROR
 	 * callable to render a template whose output is appended to the
 	 * current HTTP response body. How the template is rendered is
 	 * delegated to the current View.
 	 *
-	 * @param  string $template The name of the template passed into the view's render() method
-	 * @param  int    $id       Page ID to render
-	 * @param  int    $status   The HTTP response status code to use (optional)
+	 * @param  object $route    The original route
+	 * @param  int    $status   HTTP status for the page
 	 */
-	public function renderPage($template, $id, $status = null) {
+	public function renderPage($route, $status = 200){
 		if (!is_null($status)) {
 			$this->response->status($status);
 		}
-		$this->view->setTemplatesDirectory($this->config('templates.path'));
-		$this->view->appendData(
-			array_merge(
-				Page::getMeta($id),
-				Page::getParts($id),
-				array('page.id' => $id, 'page.template_id' => $template, 'response.status' => $status)
-			)
-		);
-		$this->view->display($template);
+		$page = new Models\Page($route->id);
 	}
 
 	public function __destruct() {

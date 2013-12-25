@@ -5,9 +5,9 @@
  * @author Diftraku
  */
 
-namespace DerpyCMS\Cache\Adapter;
+namespace DerpyCMS\Models\Cache\Adapters;
 
-use DerpyCMS\Cache\Engine as CacheEngine;
+use DerpyCMS\Models\Cache\Engine as CacheEngine;
 
 class File implements CacheEngine {
 	protected $hits = 0;
@@ -15,27 +15,31 @@ class File implements CacheEngine {
 	protected $path;
 
 	public function __construct($args) {
+		if (preg_match("/^(.+)(?:;|)/", $args, $matches)) $this->path = $matches[1];
 		if (preg_match("/gz=([^;](?:true|false))/", $args, $matches)) $gzip = $matches[1];
 		if (preg_match("/gz_level=([^;][0-9])/", $args, $matches)) $gzip_level = $matches[1];
 	}
 
 	public function get($key) {
 		assert(!is_null($key));
-		$val = file_get_contents($this->getStoragePath($key));
-		if ($val) {
-			$this->hits++;
+		if (file_exists($this->getStoragePath($key))) {
+			$val = file_get_contents($this->getStoragePath($key));
+			if (!empty($val)) {
+				$this->hits++;
 
-			return $val;
+				return $val;
+			}
 		}
-		else {
-			$this->misses++;
-
-			return false;
-		}
+		$this->misses++;
+		return false;
 	}
 
 	public function set($key, $val, $time = 0) {
 		assert(!is_null($key));
+		var_dump($key, $val);
+		if (!is_dir(dirname($this->getStoragePath($key)))) {
+			mkdir(dirname($this->getStoragePath($key)), 0775, true);
+		}
 		file_put_contents($this->getStoragePath($key), $val);
 	}
 

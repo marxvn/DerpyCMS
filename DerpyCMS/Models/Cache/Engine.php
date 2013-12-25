@@ -5,7 +5,7 @@
  * @author Diftraku
  */
 
-namespace DerpyCMS\Cache;
+namespace DerpyCMS\Models\Cache;
 
 interface Engine {
 	public function get($key);

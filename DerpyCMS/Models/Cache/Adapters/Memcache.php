@@ -5,21 +5,31 @@
  * @author Diftraku
  */
 
-namespace DerpyCMS\Cache\Adapter;
+namespace DerpyCMS\Models\Cache\Adapters;
 
-use DerpyCMS\Cache\Engine as CacheEngine;
+use DerpyCMS\Models\Cache\Engine as CacheEngine;
 
-class APC implements CacheEngine {
+class Memcache implements CacheEngine {
+
+	/**
+	 * @var Memcache
+	 */
+	protected $memcache;
 	protected $hits = 0;
 	protected $misses = 0;
 
 	public function __construct($args) {
+		$hp = explode(":", $args);
+		if (class_exists("Memcache")) {
+			$this->memcache = new \Memcache($args);
+			@$this->memcache->pconnect($hp[0], $hp[1]);
+		}
 	}
 
 	public function get($key) {
 		assert(!is_null($key));
-		$val = apc_fetch($key);
-		if ($val) {
+		$val = $this->memcache->get($key);
+		if ($val !== false) {
 			$this->hits++;
 
 			return $val;
@@ -33,12 +43,12 @@ class APC implements CacheEngine {
 
 	public function set($key, $val, $time = 0) {
 		assert(!is_null($key));
-		apc_store($key, $val, $time);
+		$this->memcache->set($key, $val, false, $time);
 	}
 
 	public function delete($key) {
 		assert(!is_null($key));
-		apc_delete($key);
+		$this->memcache->delete($key);
 	}
 
 	public function getHits() {
@@ -50,6 +60,7 @@ class APC implements CacheEngine {
 	}
 
 	public function close() {
-		return true;
+		$this->memcache->close();
+		$this->memcache = null;
 	}
 }
