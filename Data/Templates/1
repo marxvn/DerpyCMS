@@ -7,12 +7,8 @@
     <meta name="generator" content="DerpyCMS">
 </head>
 <body>
+<?php echo $this->getPart('header'); ?>
 <?php echo $this->content(); ?>
 <?php echo $this->getPart('footer'); ?>
-
-
-<?php
-    var_dump($this);
-   ?>
 </body>
 </html>
