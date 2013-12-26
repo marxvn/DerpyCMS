@@ -164,6 +164,7 @@ class DerpyCMS extends Slim {
 			$this->response->status($status);
 		}
 		$page = new Models\Page($route->id);
+		var_dump($page);
 	}
 
 	public function __destruct() {

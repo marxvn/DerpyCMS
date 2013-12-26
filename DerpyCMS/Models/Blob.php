@@ -34,29 +34,6 @@ class Blob extends Model
 		$this->data = array_merge($this->data, $blob);
 	}
 
-    static function getParts($page_id)
-    {
-        $db = DerpyCMS::getPDOInstance();
-        $query = $db->prepare(
-            'SELECT id, `hash`, `file`, type FROM '.DERPY_DB_PREFIX.self::TABLE.' WHERE page_id = :page_id ;'
-        );
-        $query->bindValue('page_id', $page_id, \PDO::PARAM_INT);
-        $query->execute();
-        $blobs = $query->fetchAll(\PDO::FETCH_OBJ);
-        $parts = array();
-        foreach ($blobs as $blob) {
-            $part = 'parts.'.$blob->type;
-            if ($blob->file == 0) {
-                // Blob is stored in DB
-                $parts[$part] = self::getBlob($blob->hash);
-            } else {
-                // Blob is stored in filesystem
-                $parts[$part] = self::getFileBlob($blob->hash);
-            }
-        }
-        return $parts;
-    }
-
 	/**
 	 * @return mixed
 	 */
@@ -95,11 +72,11 @@ class Blob extends Model
 	static public function getBlob($hash) {
 		$db = DerpyCMS::getPDOInstance();
 		$query = $db->prepare(
-			'SELECT data FROM '.DERPY_DB_PREFIX.self::TABLE_DATA.' WHERE hash = :hash ;'
+			'SELECT CONVERT(data USING utf8) FROM '.DERPY_DB_PREFIX.self::TABLE_DATA.' WHERE hash = :hash ;'
 		);
 		$query->execute(array('hash' => $hash));
 		if ($data = $query->fetch()) {
-			return $data;
+			return $data[0];
 		}
 		return true;
 	}

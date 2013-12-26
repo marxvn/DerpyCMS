@@ -42,7 +42,7 @@ class Page extends Model
 			SELECT `hash`, `type` FROM '.DERPY_DB_PREFIX.Blob::TABLE.' WHERE page_id = :page_id;
 		');
 		$query->execute(array('page_id' => $this->get('id')));
-		$data = $query->fetchAll(\PDO::FETCH_ASSOC);
+		$data = $query->fetch(\PDO::FETCH_ASSOC);
 		$query->nextRowset();
 		$meta = $query->fetchAll(\PDO::FETCH_ASSOC);
 		$query->nextRowset();
@@ -50,16 +50,17 @@ class Page extends Model
 
 		$tmp = array();
 		foreach ($meta as $kv_pair) {
-			$tmp[$kv_pair['key']] = $kv_pair['val'];
+			$tmp['meta.'.$kv_pair['key']] = $kv_pair['val'];
 		}
-		$meta = $tmp;
-
-		$tmp = array();
 		foreach ($blobs as $blob) {
-			$tmp[$blob['type']] = new Blob($blob['hash']);
+			$tmp['parts.'.$blob['type']] = new Blob($blob['hash']);
 		}
-		$blobs = $tmp;
-		var_dump($data, $meta, $blobs);
+		foreach ($data as $key => $val) {
+			$tmp['page.'.$key] = $val;
+		}
+		$this->data = array_merge($this->data, $tmp);
+		// Housekeeping
+		unset($data, $meta, $blobs, $tmp, $query);
 	}
 
 	/**
