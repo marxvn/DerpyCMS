@@ -7,6 +7,7 @@
 
 namespace DerpyCMS\Models\Cache\Adapters;
 
+use DerpyCMS\DerpyCMS;
 use DerpyCMS\Models\Cache\Engine as CacheEngine;
 
 class File implements CacheEngine {
@@ -22,12 +23,16 @@ class File implements CacheEngine {
 
 	public function get($key) {
 		assert(!is_null($key));
-		if (file_exists($this->getStoragePath($key))) {
-			$val = file_get_contents($this->getStoragePath($key));
-			if (!empty($val)) {
-				$this->hits++;
-
-				return $val;
+		$file = $this->getStoragePath($key);
+		if (file_exists($file)) {
+			$data = file($file);
+			if (count($data) == 2) {
+				$expiry = $data[0];
+				$val = $data[1];
+				if (!empty($val) && ($expiry >= time())) {
+					$this->hits++;
+					return unserialize($val);
+				}
 			}
 		}
 		$this->misses++;
@@ -36,11 +41,18 @@ class File implements CacheEngine {
 
 	public function set($key, $val, $time = 0) {
 		assert(!is_null($key));
-		var_dump($key, $val);
-		if (!is_dir(dirname($this->getStoragePath($key)))) {
-			mkdir(dirname($this->getStoragePath($key)), 0775, true);
+		$file = $this->getStoragePath($key);
+		if (!is_dir(dirname($file))) {
+			mkdir(dirname($file), 0775, true);
 		}
-		file_put_contents($this->getStoragePath($key), $val);
+		if ($time == 0) {
+			$expiry = strtotime('+'.DerpyCMS::getInstance()->config('cache.lifetime'));
+		}
+		else {
+			$expiry = time()+$time;
+		}
+		$data = $expiry."\n".serialize($val);
+		file_put_contents($file, $data);
 	}
 
 	public function delete($key) {

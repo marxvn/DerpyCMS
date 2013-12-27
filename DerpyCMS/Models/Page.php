@@ -61,6 +61,7 @@ class Page extends Model
 		$this->data = array_merge($this->data, $tmp);
 		// Housekeeping
 		unset($data, $meta, $blobs, $tmp, $query);
+		DerpyCMS::getCacheEngine()->set('page.'.$this->get('id'), $this);
 	}
 
 	/**

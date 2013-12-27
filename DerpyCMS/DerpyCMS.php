@@ -145,6 +145,7 @@ class DerpyCMS extends Slim {
 				//'view'           => '\DerpyCMS\Models\Page',
 				'blob.path'      => DERPYCMS_BLOBS,
 				'cache.path'     => DERPYCMS_CACHE,
+				'cache.lifetime' => '1h'
 			)
 		);
 	}
@@ -163,7 +164,11 @@ class DerpyCMS extends Slim {
 		if (!is_null($status)) {
 			$this->response->status($status);
 		}
-		$page = new Models\Page($route->id);
+		$page = DerpyCMS::getCacheEngine()->get('page.'.$route->id);
+		if ($page === false) {
+			$page = new Models\Page($route->id);
+			echo 'Refreshed from db';
+		}
 		var_dump($page);
 	}
 
