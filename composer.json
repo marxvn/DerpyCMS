@@ -8,13 +8,30 @@
 			"email": "diftraku@derpy.me"
 		}
 	],
+    "repositories": [
+        {
+            "type": "package",
+            "package": {
+                "name": "redbeanphp",
+                "version": "4.0.5",
+                "dist": {
+                    "url": "http://www.redbeanphp.com/downloadredbean.php",
+                    "type": "tar"
+                }
+            }
+        }
+    ],
 	"require"          : {
 		"slim/slim": "2.2.0",
-		"ircmaxell/password-compat": "1.0.3"
+        "ircmaxell/password-compat": "1.0.3",
+        "redbeanphp": "4.0.*"
 	},
 	"autoload"         : {
 		"psr-0": {
 			"DerpyCMS": "app/"
-		}
+        },
+        "files": [
+            "vendor/redbeanphp/rb.phar"
+        ]
 	}
 }
