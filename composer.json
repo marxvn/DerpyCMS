@@ -1,13 +1,13 @@
 {
-	"name"             : "Diftraku/DerpyCMS",
-	"description"      : "A derped CMS built on Slim",
-	"minimum-stability": "stable",
-	"authors"          : [
-		{
-			"name" : "Diftraku",
-			"email": "diftraku@derpy.me"
-		}
-	],
+    "name": "Diftraku/DerpyCMS",
+    "description": "A derped CMS built on Slim",
+    "minimum-stability": "stable",
+    "authors": [
+        {
+            "name": "Diftraku",
+            "email": "diftraku@derpy.me"
+        }
+    ],
     "repositories": [
         {
             "type": "package",
@@ -21,17 +21,17 @@
             }
         }
     ],
-	"require"          : {
-		"slim/slim": "2.2.0",
+    "require": {
+        "slim/slim": "2.2.0",
         "ircmaxell/password-compat": "1.0.3",
         "redbeanphp": "4.0.*"
-	},
-	"autoload"         : {
-		"psr-0": {
-			"DerpyCMS": "app/"
+    },
+    "autoload": {
+        "psr-0": {
+            "DerpyCMS": "app/"
         },
         "files": [
             "vendor/redbeanphp/rb.phar"
         ]
-	}
+    }
 }
